@@ -31,7 +31,6 @@ function App() {
     <div id="App">
       <div
         style={{
-          backgroundColor: '#333',
           display: 'flex',
           flexDirection: 'column',
           gap: '32px',
@@ -44,16 +43,6 @@ function App() {
             Select Folder
           </button>
           <span>{targetDir}</span>
-
-          {/*<input
-            type="file"
-            id="target-folder"
-            placeholder="Select a folder"
-            onChange={(e) => handleFolderSelection(e, setTargetDir)}
-            directory=""
-            webkitdirectory=""
-            mozdirectory=""
-          />*/}
         </div>
 
         <div>
@@ -63,16 +52,6 @@ function App() {
             Select Folder
           </button>
           <span style={{color: 'white', marginLeft: '10px'}}>{outputDir}</span>
-
-          {/*<input
-            type="file"
-            id="output-folder"
-            placeholder="Output folder"
-            onChange={(e) => handleFolderSelection(e, setOutputDir)}
-            directory=""
-            webkitdirectory=""
-            mozdirectory=""
-          />*/}
         </div>
         <div style={{display: 'flex', justifyContent: 'center', gap: '32px'}}>
           <div>
@@ -98,7 +77,17 @@ function App() {
         </div>
       </div>
 
-      <button onClick={organizeFolder}>Organize</button>
+      <button
+        onClick={organizeFolder}
+        className="btn-primary"
+        style={{
+          fontSize: '16px',
+          marginTop: '20px',
+        }}
+      >
+        {' '}
+        Organize
+      </button>
     </div>
   );
 }
