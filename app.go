@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"io"
 	"io/fs"
 	"log"
 	"os"
@@ -58,8 +59,14 @@ func (a *App) OrganizeDir(targetPath, outputPath string) error {
 
 	for _, file := range files {
 		ext := filepath.Ext(file.Name())
-		ext = ext[1:] // delete "."
-		os.Mkdir(filepath.Join(newPath, ext), 0750)
+		// delete "." from extension
+		ext = ext[1:]
+		writePath := filepath.Join(newPath, ext)
+		os.Mkdir(writePath, 0750)
+		srcFilePath := filepath.Join(targetPath, file.Name())
+		destFilePath := filepath.Join(writePath, file.Name())
+
+		copyFile(srcFilePath, destFilePath)
 	}
 
 	if err != nil && !os.IsExist(err) {
@@ -81,6 +88,32 @@ func walkDir(files *[]fs.DirEntry, dirPath string) error {
 		return nil
 	})
 
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func copyFile(src, dst string) error {
+	sourceFile, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer sourceFile.Close()
+
+	destinationFile, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer destinationFile.Close()
+
+	_, err = io.Copy(destinationFile, sourceFile)
+	if err != nil {
+		return err
+	}
+
+	err = destinationFile.Sync()
 	if err != nil {
 		return err
 	}
