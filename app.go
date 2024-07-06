@@ -52,8 +52,16 @@ func (a *App) OrganizeDir(targetPath, outputPath string) error {
 		return err
 	}
 
-	lastOutputDir := filepath.Base(outputPath)
-	err = os.Mkdir("./test"+"_organized", 0750)
+	lastOutputDir := "./test" + "_organized" //filepath.Base(outputPath)
+	newPath := lastOutputDir
+	err = os.Mkdir(lastOutputDir, 0750)
+
+	for _, file := range files {
+		ext := filepath.Ext(file.Name())
+		ext = ext[1:] // delete "."
+		os.Mkdir(filepath.Join(newPath, ext), 0750)
+	}
+
 	if err != nil && !os.IsExist(err) {
 		log.Fatal(err)
 	}
@@ -67,7 +75,6 @@ func walkDir(files *[]fs.DirEntry, dirPath string) error {
 			return err
 		}
 		if !d.IsDir() {
-			fmt.Println(filepath.Ext(d.Name()))
 			*files = append(*files, d)
 
 		}
