@@ -7,8 +7,9 @@ import {Greet, GetPath, OrganizeDir} from '../wailsjs/go/main/App';
 function App() {
   const [targetDir, setTargetDir] = useState('');
   const [outputDir, setOutputDir] = useState('');
+  const [isCopySelected, setIsCopySelected] = useState(true);
 
-  const handleFolderSelection = async (event, pathFunc) => {
+  const handleFolderSelection = async (pathFunc) => {
     try {
       const folder = await GetPath();
       pathFunc(folder);
@@ -39,7 +40,12 @@ function App() {
       >
         <div>
           <label htmlFor="target-folder">Target folder: </label>
-          <input
+          <button onClick={() => handleFolderSelection(setTargetDir)}>
+            Select Folder
+          </button>
+          <span>{targetDir}</span>
+
+          {/*<input
             type="file"
             id="target-folder"
             placeholder="Select a folder"
@@ -47,13 +53,18 @@ function App() {
             directory=""
             webkitdirectory=""
             mozdirectory=""
-          />
+          />*/}
         </div>
 
         <div>
           <label htmlFor="output-folder">Output folder: </label>
 
-          <input
+          <button onClick={() => handleFolderSelection(setOutputDir)}>
+            Select Folder
+          </button>
+          <span style={{color: 'white', marginLeft: '10px'}}>{outputDir}</span>
+
+          {/*<input
             type="file"
             id="output-folder"
             placeholder="Output folder"
@@ -61,7 +72,29 @@ function App() {
             directory=""
             webkitdirectory=""
             mozdirectory=""
-          />
+          />*/}
+        </div>
+        <div style={{display: 'flex', justifyContent: 'center', gap: '32px'}}>
+          <div>
+            {' '}
+            <label htmlFor="copy">Copy files: </label>
+            <input
+              type="radio"
+              id="copy"
+              onChange={() => setIsCopySelected(!isCopySelected)}
+              checked={isCopySelected}
+            />
+          </div>
+          <div>
+            <label htmlFor="cut">Cut files: </label>
+
+            <input
+              type="radio"
+              id="cut"
+              onChange={() => setIsCopySelected(!isCopySelected)}
+              checked={!isCopySelected}
+            />
+          </div>
         </div>
       </div>
 

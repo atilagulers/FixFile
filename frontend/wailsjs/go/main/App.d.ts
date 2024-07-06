@@ -5,4 +5,4 @@ export function GetPath():Promise<string>;
 
 export function Greet(arg1:string):Promise<string>;
 
-export function OrganizeDir(arg1:string,arg2:string):Promise<void>;
+export function OrganizeDir(arg1:string,arg2:string,arg3:boolean):Promise<void>;

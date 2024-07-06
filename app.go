@@ -43,7 +43,7 @@ func (a *App) GetPath() (string, error) {
 	return folder, nil
 }
 
-func (a *App) OrganizeDir(targetPath, outputPath string) error {
+func (a *App) OrganizeDir(targetPath, outputPath string, isCopy bool) error {
 	fmt.Println("Reading folder: ", targetPath)
 	fmt.Println("Output folder: ", outputPath)
 	var files []fs.DirEntry
@@ -53,7 +53,7 @@ func (a *App) OrganizeDir(targetPath, outputPath string) error {
 		return err
 	}
 
-	lastOutputDir := "./test" + "_organized" //filepath.Base(outputPath)
+	lastOutputDir := outputPath + "_organized" //filepath.Base(outputPath)
 	newPath := lastOutputDir
 	err = os.Mkdir(lastOutputDir, 0750)
 
@@ -61,12 +61,17 @@ func (a *App) OrganizeDir(targetPath, outputPath string) error {
 		ext := filepath.Ext(file.Name())
 		// delete "." from extension
 		ext = ext[1:]
-		writePath := filepath.Join(newPath, ext)
-		os.Mkdir(writePath, 0750)
-		srcFilePath := filepath.Join(targetPath, file.Name())
-		destFilePath := filepath.Join(writePath, file.Name())
 
-		copyFile(srcFilePath, destFilePath)
+		extDirPath := filepath.Join(newPath, ext)
+		os.Mkdir(extDirPath, 0750)
+		srcFilePath := filepath.Join(targetPath, file.Name())
+		destFilePath := filepath.Join(extDirPath, file.Name())
+
+		if isCopy {
+			err = copyFile(srcFilePath, destFilePath)
+		} else {
+			err = os.Rename(srcFilePath, destFilePath)
+		}
 	}
 
 	if err != nil && !os.IsExist(err) {
