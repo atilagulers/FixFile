@@ -3,7 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
+	"io/fs"
+	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -29,27 +32,50 @@ func (a *App) Greet(name string) string {
 	return fmt.Sprintf("Hello %s, It's show time!", name)
 }
 
-func (a *App) SelectFolder() (string, error) {
+func (a *App) GetPath() (string, error) {
 	folder, err := runtime.OpenDirectoryDialog(a.ctx, runtime.OpenDialogOptions{
 		Title: "Select a Folder",
 	})
 	if err != nil {
 		return "", err
 	}
-	fmt.Println("Selected Folder: ", folder)
 	return folder, nil
 }
 
-func (a *App) ReadFolder(folderPath string) error {
-	fmt.Println("Reading folder: ", folderPath)
-	files, err := os.ReadDir(folderPath)
+func (a *App) OrganizeDir(targetPath, outputPath string) error {
+	fmt.Println("Reading folder: ", targetPath)
+	fmt.Println("Output folder: ", outputPath)
+	var files []fs.DirEntry
+	err := walkDir(&files, targetPath)
 
 	if err != nil {
 		return err
 	}
 
-	for _, file := range files {
-		fmt.Println("File: ", file.Name())
+	lastOutputDir := filepath.Base(outputPath)
+	err = os.Mkdir("./test"+"_organized", 0750)
+	if err != nil && !os.IsExist(err) {
+		log.Fatal(err)
+	}
+	return nil
+}
+
+func walkDir(files *[]fs.DirEntry, dirPath string) error {
+
+	err := filepath.WalkDir(dirPath, func(path string, d os.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if !d.IsDir() {
+			fmt.Println(filepath.Ext(d.Name()))
+			*files = append(*files, d)
+
+		}
+		return nil
+	})
+
+	if err != nil {
+		return err
 	}
 
 	return nil
