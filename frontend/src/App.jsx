@@ -21,7 +21,7 @@ function App() {
 
   const organizeFolder = async () => {
     try {
-      await OrganizeDir(targetDir, outputDir);
+      await OrganizeDir(targetDir, outputDir, isCopySelected);
     } catch (err) {
       console.error(err);
     }

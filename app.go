@@ -53,7 +53,7 @@ func (a *App) OrganizeDir(targetPath, outputPath string, isCopy bool) error {
 		return err
 	}
 
-	lastOutputDir := outputPath + "_organized" //filepath.Base(outputPath)
+	lastOutputDir := filepath.Join(outputPath, filepath.Base(outputPath)+"_organized")
 	newPath := lastOutputDir
 	err = os.Mkdir(lastOutputDir, 0750)
 
