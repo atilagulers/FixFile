@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"io/fs"
 	"log"
 	"os"
 	"path/filepath"
@@ -54,7 +53,10 @@ func (a *App) OnFileDrop() string {
 func (a *App) OrganizeDir(targetPath, outputPath string, isCopy bool) error {
 	fmt.Println("Reading folder: ", targetPath)
 	fmt.Println("Output folder: ", outputPath)
-	var files []fs.DirEntry
+
+	runtime.LogTrace(a.ctx, "Reading folder: %s")
+
+	var files []string
 	err := walkDir(&files, targetPath)
 
 	if err != nil {
@@ -63,57 +65,50 @@ func (a *App) OrganizeDir(targetPath, outputPath string, isCopy bool) error {
 
 	outputBaseDir := filepath.Join(outputPath, filepath.Base(targetPath)+"_organized")
 	err = os.MkdirAll(outputBaseDir, 0750)
-	if err != nil {
+	if err != nil && !os.IsExist(err) {
 		return err
 	}
 
 	for _, file := range files {
-		ext := filepath.Ext(file.Name())
+		ext := filepath.Ext(file)
 		// delete "." from extension
-		if len(ext) > 0 {
-			ext = ext[1:]
-		} else {
-			ext = "unknown"
-		}
+		ext = ext[1:]
 
 		// create folder for extension
 		extDirPath := filepath.Join(outputBaseDir, ext)
 		err := os.MkdirAll(extDirPath, 0750)
-		if err != nil {
+		if err != nil && !os.IsExist(err) {
 			log.Printf("Failed to create directory %s: %v", extDirPath, err)
 			continue
 		}
 
-		srcFilePath := filepath.Join(targetPath, file.Name())
-		destFilePath := filepath.Join(extDirPath, file.Name())
+		srcFilePath := file
+		destFilePath := filepath.Join(extDirPath, filepath.Base(file))
 
 		fmt.Println("SRC: ", srcFilePath)
 		fmt.Println("DEST: ", destFilePath)
 
-		err = os.Rename(srcFilePath, destFilePath)
-		//if isCopy {
-		//	err = copyFile(srcFilePath, destFilePath)
-		//} else {
-		//	err = os.Rename(srcFilePath, destFilePath)
-		//}
+		if isCopy {
+			err = copyFile(srcFilePath, destFilePath)
+		} else {
+			err = os.Rename(srcFilePath, destFilePath)
+		}
 
 		if err != nil {
-			log.Printf("Failed to move file %s to %s: %v", srcFilePath, destFilePath, err)
+			log.Printf("Failed to process file %s: %v", file, err)
 		}
 	}
 
 	return nil
 }
 
-func walkDir(files *[]fs.DirEntry, dirPath string) error {
-
+func walkDir(files *[]string, dirPath string) error {
 	err := filepath.WalkDir(dirPath, func(path string, d os.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
 		if !d.IsDir() {
-			*files = append(*files, d)
-
+			*files = append(*files, path)
 		}
 		return nil
 	})

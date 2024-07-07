@@ -7,7 +7,7 @@ import {useDropzone} from 'react-dropzone';
 function App() {
   const [targetDir, setTargetDir] = useState('');
   const [outputDir, setOutputDir] = useState('');
-  //  const [isCopySelected, setIsCopySelected] = useState(true);
+  const [isCopySelected, setIsCopySelected] = useState(true);
 
   const onDropTarget = useCallback(async () => {
     const dir = await OnFileDrop();
@@ -62,6 +62,8 @@ function App() {
         <h1>Fix File</h1>
       </header>
 
+      <div className="top-notification">Organizing.</div>
+
       <div>
         <div className="dropzone-container">
           <Dropzone
@@ -93,6 +95,7 @@ function App() {
               style={{
                 fontSize: '20px',
               }}
+              disabled={!targetDir || !outputDir}
             >
               Organize
             </button>
