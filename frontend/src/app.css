@@ -23,6 +23,24 @@ header h1 {
   color: white;
   padding: 10px;
   margin-bottom: 20px;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+}
+
+.top-notification.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .dropzone-container {
