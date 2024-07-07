@@ -53,7 +53,7 @@ func (a *App) OrganizeDir(targetPath, outputPath string, isCopy bool) error {
 		return err
 	}
 
-	lastOutputDir := filepath.Join(outputPath, filepath.Base(outputPath)+"_organized")
+	lastOutputDir := filepath.Join(outputPath, filepath.Base(targetPath)+"_organized")
 	newPath := lastOutputDir
 	err = os.Mkdir(lastOutputDir, 0750)
 
@@ -66,7 +66,7 @@ func (a *App) OrganizeDir(targetPath, outputPath string, isCopy bool) error {
 		os.Mkdir(extDirPath, 0750)
 		srcFilePath := filepath.Join(targetPath, file.Name())
 		destFilePath := filepath.Join(extDirPath, file.Name())
-
+		fmt.Println("Moving file: ", srcFilePath, " to ", destFilePath)
 		if isCopy {
 			err = copyFile(srcFilePath, destFilePath)
 		} else {
