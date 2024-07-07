@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "@wails/runtime": "^1.3.20"
+    "@wails/runtime": "^1.3.20",
+    "react-dropzone": "^14.2.3"
   }
 }

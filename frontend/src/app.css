@@ -1,5 +1,7 @@
 #app {
+  margin: auto;
   height: 100vh;
+  width: 50%;
   text-align: center;
 }
 
@@ -21,7 +23,7 @@ button:hover {
 }
 
 .btn-primary {
-  background-color: #c70000;
+  background-color: var(--primary-color);
   color: white;
   padding: 10px 20px;
   border-radius: 6px;
@@ -31,7 +33,7 @@ button:hover {
 }
 
 .btn-primary:hover {
-  background-color: #ff0000;
+  background-color: var(--primary-color-hover);
 }
 
 input[type='radio'] {
@@ -40,4 +42,16 @@ input[type='radio'] {
 
 span {
   margin-left: 10px;
+}
+
+.folder-input-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.select-folder-label {
+  display: inline-block;
+  margin-right: 12px;
 }

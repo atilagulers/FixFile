@@ -7,7 +7,7 @@ import {Greet, GetPath, OrganizeDir} from '../wailsjs/go/main/App';
 function App() {
   const [targetDir, setTargetDir] = useState('');
   const [outputDir, setOutputDir] = useState('');
-  const [isCopySelected, setIsCopySelected] = useState(true);
+  //  const [isCopySelected, setIsCopySelected] = useState(true);
 
   const handleFolderSelection = async (pathFunc) => {
     try {
@@ -28,32 +28,37 @@ function App() {
   };
 
   return (
-    <div id="App">
+    <div id="app">
+      <h1>Fix File</h1>
       <div
         style={{
           display: 'flex',
-          flexDirection: 'column',
           gap: '32px',
           padding: '32px',
+          width: '100%',
         }}
       >
-        <div>
-          <label htmlFor="target-folder">Target folder: </label>
+        <div className="folder-input-container">
+          <label className="select-folder-label" htmlFor="target-folder">
+            Target folder:{' '}
+          </label>
           <button onClick={() => handleFolderSelection(setTargetDir)}>
             Select Folder
           </button>
           <span>{targetDir}</span>
         </div>
 
-        <div>
-          <label htmlFor="output-folder">Output folder: </label>
+        <div className="folder-input-container">
+          <label className="select-folder-label" htmlFor="output-folder">
+            Output location:
+          </label>
 
           <button onClick={() => handleFolderSelection(setOutputDir)}>
             Select Folder
           </button>
           <span style={{color: 'white', marginLeft: '10px'}}>{outputDir}</span>
         </div>
-        <div style={{display: 'flex', justifyContent: 'center', gap: '32px'}}>
+        {/*<div style={{display: 'flex', justifyContent: 'center', gap: '32px'}}>
           <div>
             {' '}
             <label htmlFor="copy">Copy files: </label>
@@ -74,7 +79,7 @@ function App() {
               checked={!isCopySelected}
             />
           </div>
-        </div>
+        </div>*/}
       </div>
 
       <button
@@ -85,7 +90,6 @@ function App() {
           marginTop: '20px',
         }}
       >
-        {' '}
         Organize
       </button>
     </div>

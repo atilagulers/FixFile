@@ -53,30 +53,47 @@ func (a *App) OrganizeDir(targetPath, outputPath string, isCopy bool) error {
 		return err
 	}
 
-	lastOutputDir := filepath.Join(outputPath, filepath.Base(targetPath)+"_organized")
-	newPath := lastOutputDir
-	err = os.Mkdir(lastOutputDir, 0750)
+	outputBaseDir := filepath.Join(outputPath, filepath.Base(targetPath)+"_organized")
+	err = os.MkdirAll(outputBaseDir, 0750)
+	if err != nil {
+		return err
+	}
 
 	for _, file := range files {
 		ext := filepath.Ext(file.Name())
 		// delete "." from extension
-		ext = ext[1:]
+		if len(ext) > 0 {
+			ext = ext[1:]
+		} else {
+			ext = "unknown"
+		}
 
-		extDirPath := filepath.Join(newPath, ext)
-		os.Mkdir(extDirPath, 0750)
+		// create folder for extension
+		extDirPath := filepath.Join(outputBaseDir, ext)
+		err := os.MkdirAll(extDirPath, 0750)
+		if err != nil {
+			log.Printf("Failed to create directory %s: %v", extDirPath, err)
+			continue
+		}
+
 		srcFilePath := filepath.Join(targetPath, file.Name())
 		destFilePath := filepath.Join(extDirPath, file.Name())
-		fmt.Println("Moving file: ", srcFilePath, " to ", destFilePath)
-		if isCopy {
-			err = copyFile(srcFilePath, destFilePath)
-		} else {
-			err = os.Rename(srcFilePath, destFilePath)
+
+		fmt.Println("SRC: ", srcFilePath)
+		fmt.Println("DEST: ", destFilePath)
+
+		err = os.Rename(srcFilePath, destFilePath)
+		//if isCopy {
+		//	err = copyFile(srcFilePath, destFilePath)
+		//} else {
+		//	err = os.Rename(srcFilePath, destFilePath)
+		//}
+
+		if err != nil {
+			log.Printf("Failed to move file %s to %s: %v", srcFilePath, destFilePath, err)
 		}
 	}
 
-	if err != nil && !os.IsExist(err) {
-		log.Fatal(err)
-	}
 	return nil
 }
 
