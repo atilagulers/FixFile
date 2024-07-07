@@ -17,9 +17,11 @@ func main() {
 
 	// Create application with options
 	err := wails.Run(&options.App{
-		Title:  "fix-file",
-		Width:  1024,
-		Height: 768,
+		Title:     "fix-file",
+		Width:     1024,
+		Height:    768,
+		MinWidth:  512,
+		MinHeight: 512,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
@@ -27,6 +29,12 @@ func main() {
 		OnStartup:        app.startup,
 		Bind: []interface{}{
 			app,
+		},
+		DragAndDrop: &options.DragAndDrop{
+			EnableFileDrop: true,
+			//DisableWebViewDrop: false,
+			//CSSDropProperty:    "--wails-drop-target",
+			//CSSDropValue:       "drop",
 		},
 	})
 

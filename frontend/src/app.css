@@ -18,6 +18,21 @@ header h1 {
   font-size: 2rem;
 }
 
+.dropzone-container {
+  padding: 20px;
+  display: grid;
+  grid-template-columns: auto auto;
+  margin: 0 auto;
+  align-items: center;
+  gap: 40px;
+  max-width: 1000px;
+}
+
+.dropzone {
+  max-width: 600px;
+  text-align: left;
+}
+
 button {
   background-color: #555;
   color: black;

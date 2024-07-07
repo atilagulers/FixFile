@@ -1,7 +1,7 @@
 import {useEffect, useState, useCallback} from 'react';
 import logo from './assets/images/appicon.png';
 import './App.css';
-import {GetPath, OrganizeDir} from '../wailsjs/go/main/App';
+import {SelectFolder, OnFileDrop, OrganizeDir} from '../wailsjs/go/main/App';
 import {useDropzone} from 'react-dropzone';
 
 function App() {
@@ -9,12 +9,15 @@ function App() {
   const [outputDir, setOutputDir] = useState('');
   //  const [isCopySelected, setIsCopySelected] = useState(true);
 
-  const onDropTarget = useCallback((acceptedFiles) => {
-    console.log('Dropped files in target:', acceptedFiles);
+  const onDropTarget = useCallback(async () => {
+    const dir = await OnFileDrop();
+    setTargetDir(dir);
   }, []);
 
-  const onDropOutput = useCallback((acceptedFiles) => {
-    console.log('Dropped files in output:', acceptedFiles);
+  const onDropOutput = useCallback(async (acceptedFiles) => {
+    const dir = await OnFileDrop();
+
+    setOutputDir(dir);
   }, []);
 
   const {getRootProps: getTargetRootProps, isDragActive: isTargetDragActive} =
@@ -29,7 +32,7 @@ function App() {
 
   const handleFolderSelection = async (pathFunc) => {
     try {
-      const folder = await GetPath();
+      const folder = await SelectFolder();
       pathFunc(folder);
     } catch (err) {
       console.error(err);
@@ -58,55 +61,54 @@ function App() {
         />
         <h1>Fix File</h1>
       </header>
-      <div
-        style={{
-          display: 'flex',
-          gap: '32px',
-          width: '100%',
-          marginBottom: '20px',
-        }}
-      >
-        <Dropzone
-          getProps={getTargetRootProps}
-          setDir={setTargetDir}
-          path={targetDir}
-          handleFolderSelection={handleFolderSelection}
-        />
 
-        <Dropzone
-          getProps={getOutputRootProps}
-          setDir={setOutputDir}
-          path={outputDir}
-          handleFolderSelection={handleFolderSelection}
-        />
+      <div>
+        <div className="dropzone-container">
+          <Dropzone
+            label="Target Folder:"
+            getProps={getTargetRootProps}
+            setDir={setTargetDir}
+            path={targetDir}
+            handleFolderSelection={handleFolderSelection}
+          />
+
+          <Dropzone
+            label="Output Location:"
+            getProps={getOutputRootProps}
+            setDir={setOutputDir}
+            path={outputDir}
+            handleFolderSelection={handleFolderSelection}
+          />
+
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'end',
+              gridColumn: '1 / -1',
+            }}
+          >
+            <button
+              onClick={organizeFolder}
+              className="btn-primary"
+              style={{
+                fontSize: '20px',
+              }}
+            >
+              Organize
+            </button>
+          </div>
+        </div>
       </div>
-
-      <button
-        onClick={organizeFolder}
-        className="btn-primary"
-        style={{
-          fontSize: '18px',
-          marginTop: '20px',
-        }}
-      >
-        Organize
-      </button>
     </div>
   );
 }
 
 export default App;
 
-const Dropzone = ({getProps, setDir, path, handleFolderSelection}) => {
+const Dropzone = ({label, getProps, setDir, path, handleFolderSelection}) => {
   return (
-    <div
-      style={{
-        display: 'flex',
-        gap: '32px',
-        width: '100%',
-        marginBottom: '20px',
-      }}
-    >
+    <div className="dropzone">
+      <label>{label}</label>
       <div
         className="folder-input-container"
         {...getProps()}
@@ -115,8 +117,14 @@ const Dropzone = ({getProps, setDir, path, handleFolderSelection}) => {
         }}
       >
         <span>Drag and drop or click to select target folder</span>
-        <span>{path}</span>
       </div>
+      <span
+        style={{
+          marginTop: '8px',
+        }}
+      >
+        {path}
+      </span>
     </div>
   );
 };

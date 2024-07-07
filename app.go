@@ -28,12 +28,7 @@ func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 }
 
-// Greet returns a greeting for the given name
-func (a *App) Greet(name string) string {
-	return fmt.Sprintf("Hello %s, It's show time!", name)
-}
-
-func (a *App) GetPath() (string, error) {
+func (a *App) SelectFolder() (string, error) {
 	folder, err := runtime.OpenDirectoryDialog(a.ctx, runtime.OpenDialogOptions{
 		Title: "Select a Folder",
 	})
@@ -41,6 +36,19 @@ func (a *App) GetPath() (string, error) {
 		return "", err
 	}
 	return folder, nil
+}
+
+func (a *App) OnFileDrop() string {
+	pathChan := make(chan string, 1)
+	runtime.OnFileDrop(a.ctx, func(x, y int, paths []string) {
+		if len(paths) > 0 {
+			fmt.Println("Files dropped: ", paths[0])
+			pathChan <- paths[0]
+		}
+	})
+
+	path := <-pathChan // Wait to receive the path from the channel
+	return path
 }
 
 func (a *App) OrganizeDir(targetPath, outputPath string, isCopy bool) error {
