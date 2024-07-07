@@ -1,5 +1,5 @@
 import {useEffect, useState, useCallback} from 'react';
-//import logo from './assets/images/logo-universal.png';
+import logo from './assets/images/appicon.png';
 import './App.css';
 import {GetPath, OrganizeDir} from '../wailsjs/go/main/App';
 import {useDropzone} from 'react-dropzone';
@@ -46,17 +46,18 @@ function App() {
 
   return (
     <div id="app">
-      <h1>Fix File</h1>
-
-      {/*<div style={{backgroundColor: 'gray'}}>
-        <input {...getInputProps()} />
-        {isDragActive ? (
-          <p>Drop the files here ...</p>
-        ) : (
-          <p>Drag 'n' drop some files here, or click to select files</p>
-        )}
-      </div>*/}
-
+      <header>
+        <img
+          src={logo}
+          alt="logo"
+          style={{
+            width: '70px',
+            height: '70px',
+            borderRadius: '6px',
+          }}
+        />
+        <h1>Fix File</h1>
+      </header>
       <div
         style={{
           display: 'flex',
@@ -65,30 +66,27 @@ function App() {
           marginBottom: '20px',
         }}
       >
-        <div
-          className="folder-input-container"
-          {...getTargetRootProps()}
-          onClick={() => {
-            handleFolderSelection(setTargetDir);
-          }}
-        >
-          <span>Drag and drop or click to select target folder</span>
-          <span>{targetDir}</span>
-        </div>
+        <Dropzone
+          getProps={getTargetRootProps}
+          setDir={setTargetDir}
+          path={targetDir}
+          handleFolderSelection={handleFolderSelection}
+        />
 
-        <div className="folder-input-container" {...getOutputRootProps()}>
-          <span>Drag and drop or click to select output folder</span>
-          <span>{outputDir}</span>
-        </div>
+        <Dropzone
+          getProps={getOutputRootProps}
+          setDir={setOutputDir}
+          path={outputDir}
+          handleFolderSelection={handleFolderSelection}
+        />
       </div>
 
       <button
         onClick={organizeFolder}
         className="btn-primary"
         style={{
-          fontSize: '16px',
+          fontSize: '18px',
           marginTop: '20px',
-          width: '100%',
         }}
       >
         Organize
@@ -98,6 +96,30 @@ function App() {
 }
 
 export default App;
+
+const Dropzone = ({getProps, setDir, path, handleFolderSelection}) => {
+  return (
+    <div
+      style={{
+        display: 'flex',
+        gap: '32px',
+        width: '100%',
+        marginBottom: '20px',
+      }}
+    >
+      <div
+        className="folder-input-container"
+        {...getProps()}
+        onClick={() => {
+          handleFolderSelection(setDir);
+        }}
+      >
+        <span>Drag and drop or click to select target folder</span>
+        <span>{path}</span>
+      </div>
+    </div>
+  );
+};
 
 {
   /*<div style={{display: 'flex', justifyContent: 'center', gap: '32px'}}>
